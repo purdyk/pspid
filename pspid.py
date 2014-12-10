@@ -104,7 +104,7 @@ def prettyPrint(thing):
 
 def loadIgnored():
     try:
-        fh = open("/home/purdyk/.ss_ignored")
+        fh = open(os.path.expanduser("~/.pspid_ignored"))
         ignored = pickle.load(fh)
         fh.close
     except:

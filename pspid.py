@@ -9,47 +9,46 @@ import SabAPI
 import NabAPI
 
 class PSpid:
-    def __init__(self):
-        self.mb_b = 1048576
+    def __init__(self, matcher):
+        self.matcher = matcher
 
-    def buildFileList(self, matchSpec):
-        globMatcher = re.compile(".*" + matchSpec + ".*", re.I)
-        fileList = {}
+    def build_file_list(self, matchSpec):
+        glob_matcher = re.compile(".*" + matchSpec + ".*", re.I)
+        file_list = {}
         for root, subs, files in os.walk(config.get('general', 'basedir')):
             for each in subs:
-                if globMatcher.match(each):
-                    (d, fn) = buildTuple(dateMatcher,each)
-                    fileList[d] = (fn, '')
+                if glob_matcher.match(each):
+                    (d, fn) = self.build_tuple(self.matcher, each)
+                    file_list[d] = (fn, '')
 
             for each in files:
-                if globMatcher.match(each):
-                    (d1, fn) = buildTuple(dateMatcher,each)
-                    (d2, dirn) = buildTuple(dateMatcher,root)
+                if glob_matcher.match(each):
+                    (d1, fn) = self.build_tuple(self.matcher, each)
+                    (d2, dirn) = self.build_tuple(self.matcher, root)
                     d = d1 if len(d1) > len(d2) else d2
 
-                    fileList[d] = (dirn, fn)
+                    file_list[d] = (dirn, fn)
 
-        return fileList
+        return file_list
 
-    def buildTuple(self, matcher, thing):
-        match = matcher.search(thing)
+    def build_tuple(self, matcher, filename):
+        match = matcher.search(filename)
         if match:
             a = ".".join(match.groups()[-3:])
         else:
             a = ""
-        return (a, thing)
+        return a, filename
 
-    def filterMissing(self, have, found):
+    @staticmethod
+    def filter_missing(have, found):
         possible = []
         for each in found.keys():
             if each not in have:
                 possible.append(found[each])
         return possible
 
-    def prettyPrint(self, thing):
-        print "{0}\n\tSize: {1:0.0f} mb".format(thing['title'], float(thing['properAttr']['size']) / self.mb_b)
-
-    def loadIgnored(self):
+    @staticmethod
+    def load_ignored():
         try:
             fh = open(os.path.expanduser("~/.pspid_ignored"))
             ignored = pickle.load(fh)
@@ -58,7 +57,8 @@ class PSpid:
             ignored = []
         return ignored
 
-    def saveIgnored(self, ignored):
+    @staticmethod
+    def save_ignored(ignored):
         fh = open(os.path.expanduser("~/.pspid_ignored"), "w")
         pickle.dump(ignored, fh)
         fh.close()
@@ -70,39 +70,39 @@ if __name__ == "__main__":
     config = ConfigParser.ConfigParser()
     config.read('pspid.conf')
 
-    pspid = PSpid()
+    pspid = PSpid(dateMatcher)
     sabapi = SabAPI.SabAPI(config)
-    nabapi = NabAPI.NabAPI(config)
-    nabapi.installFilter(dateMatcher)
+    nabapi = NabAPI.NabAPI(config, dateMatcher)
 
-    fileCrit = sys.argv[1]
-    searchCrit = fileCrit
+    file_crit = sys.argv[1]
+    search_crit = file_crit
 
     if len(sys.argv) > 2:
-        searchCrit += " " + sys.argv[2]
-    have = pspid.buildFileList(fileCrit)
+        search_crit += " " + sys.argv[2]
+
+    have = pspid.build_file_list(file_crit)
 
     print "Have {0} files matching on disk".format(len(have))
 
-    found = nabapi.doSearch(searchCrit)
+    found = nabapi.do_search(search_crit)
 
     print "Found {0} results on the indexer".format(len(found))
 
-    possible = pspid.filterMissing(have, found)
+    possible = pspid.filter_missing(have, found)
 
-    ignored = pspid.loadIgnored()
+    ignored = pspid.load_ignored()
 
     for each in possible:
-        if each['guid'] not in ignored:
-            pspid.prettyPrint(each)
+        if each.guid() not in ignored:
+            nabapi.pretty_print(each)
             res = raw_input("\nEnqueue? [y/n/s/q] ")
-            if (res == 'y'):
-                sabapi.enqueueReport(each['link'], each['title'])
-            elif (res == 's'):
+            if res == 'y':
+                sabapi.enqueueReport(each.link(), each.title())
+            elif res == 's':
                 print "skipping"
-            elif (res == 'q'):
+            elif res == 'q':
                 break;
             else:
                 ignored.append(each['guid'])
 
-    pspid.saveIgnored(ignored)
+    pspid.save_ignored(ignored)

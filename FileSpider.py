@@ -1,6 +1,6 @@
 import os
 import re
-
+import pickle
 
 class FileSpider:
     def __init__(self, config, matcher):
@@ -13,13 +13,13 @@ class FileSpider:
         for root, subs, files in os.walk(self.config.get('general', 'basedir')):
             for each in subs:
                 if glob_matcher.match(each):
-                    (d, fn) = self.build_tuple(self.matcher, each)
+                    (d, fn) = self.build_tuple(each)
                     file_list[d] = (fn, '')
 
             for each in files:
                 if glob_matcher.match(each):
-                    (d1, fn) = self.build_tuple(self.matcher, each)
-                    (d2, dirn) = self.build_tuple(self.matcher, root)
+                    (d1, fn) = self.build_tuple(each)
+                    (d2, dirn) = self.build_tuple(root)
                     d = d1 if len(d1) > len(d2) else d2
 
                     file_list[d] = (dirn, fn)

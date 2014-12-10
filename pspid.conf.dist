@@ -1,0 +1,10 @@
+[general]
+basedir:/some/path
+
+[newznab]
+url:https://someserver/api?
+key:
+
+[sabnzbd]
+url:http://somehost:someport/api?
+key:

@@ -36,17 +36,22 @@ if __name__ == "__main__":
 
     ignored = spider.load_ignored()
 
-    for each in possible:
-        if each.guid() not in ignored:
-            print each
-            res = raw_input("\nEnqueue? [ (y)es / (n)o / (s)kip / (q)uit ] ")
-            if res == 'y':
-                sabapi.enqueue(each.link(), each.title())
-            elif res == 's':
-                print "skipping"
-            elif res == 'q':
-                break
-            else:
-                ignored.append(each.guid())
+    try:
+        for each in possible:
+            if each.guid() not in ignored:
+                print each
+                res = raw_input("\nEnqueue? [ (y)es / (n)o / (s)kip / (q)uit ] ")
+                if res == 'y':
+                    sabapi.enqueue(each.link(), each.title())
+                elif res == 's':
+                    print "skipping"
+                elif res == 'q':
+                    break
+                else:
+                    ignored.append(each.guid())
 
-    spider.save_ignored(ignored)
+    except KeyboardInterrupt:
+        print "\nexiting"
+
+    finally:
+        spider.save_ignored(ignored)

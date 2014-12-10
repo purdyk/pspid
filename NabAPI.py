@@ -6,7 +6,6 @@ import json
 class NabAPI:
     def __init__(self, config, filter_re):
         self.config = config
-        self.mb_b = 1048576
         self.filter = filter_re
 
     def do_search(self, match_spec):
@@ -56,11 +55,9 @@ class NabAPI:
 
         return results
 
-    def pretty_print(self, nab_result):
-        print "{0}\n\tSize: {1:0.0f} mb".format(nab_result.title(), float(nab_result.size()) / self.mb_b)
-
-
 class NabResult:
+    mb_b = 1048576
+
     def __init__(self, attrs):
         self.attrs = attrs
         self.build_attrs()
@@ -82,3 +79,6 @@ class NabResult:
 
     def link(self):
         return self.attrs['link']
+
+    def __str__(self):
+        return "{0}\n\tSize: {1:0.0f} mb".format(self.title(), float(self.size()) / NabResult.mb_b)

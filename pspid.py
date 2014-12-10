@@ -38,8 +38,8 @@ if __name__ == "__main__":
 
     for each in possible:
         if each.guid() not in ignored:
-            nabapi.pretty_print(each)
-            res = raw_input("\nEnqueue? [y/n/s/q] ")
+            print each
+            res = raw_input("\nEnqueue? [ (y)es / (n)o / (s)kip / (q)uit ] ")
             if res == 'y':
                 sabapi.enqueue(each.link(), each.title())
             elif res == 's':
@@ -47,6 +47,6 @@ if __name__ == "__main__":
             elif res == 'q':
                 break
             else:
-                ignored.append(each['guid'])
+                ignored.append(each.guid())
 
     filespider.save_ignored(ignored)

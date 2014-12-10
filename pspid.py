@@ -41,11 +41,11 @@ if __name__ == "__main__":
             nabapi.pretty_print(each)
             res = raw_input("\nEnqueue? [y/n/s/q] ")
             if res == 'y':
-                sabapi.enqueueReport(each.link(), each.title())
+                sabapi.enqueue(each.link(), each.title())
             elif res == 's':
                 print "skipping"
             elif res == 'q':
-                break;
+                break
             else:
                 ignored.append(each['guid'])
 

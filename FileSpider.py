@@ -1,6 +1,7 @@
 import os
 import re
 
+
 class FileSpider:
     def __init__(self, config, matcher):
         self.matcher = matcher

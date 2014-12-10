@@ -1,14 +1,15 @@
 import urllib
 import urllib2
 
+
 class SabAPI:
 
     def __init__(self, config):
         self.config = config
 
-    def enqueueReport(self, url, title):
+    def enqueue(self, url, title):
         params = {
-            "apikey": config.get('sabnzbd', 'key'),
+            "apikey": self.config.get('sabnzbd', 'key'),
             "mode": "addurl",
             "name": url,
             "cat": "xxx",

@@ -142,7 +142,7 @@ if __name__ == "__main__":
 
     found = doSearch(searchCrit)
 
-    print "Found {0} results on peenbin".format(len(found))
+    print "Found {0} results on the indexer".format(len(found))
 
     possible = filterMissing(have, found)
 

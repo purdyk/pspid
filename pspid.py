@@ -5,7 +5,7 @@ import ConfigParser
 import sys
 import SabAPI
 import NabAPI
-import FileSpider
+import FCSpider
 
 if __name__ == "__main__":
 
@@ -14,7 +14,7 @@ if __name__ == "__main__":
     config = ConfigParser.ConfigParser()
     config.read('pspid.conf')
 
-    filespider = FileSpider.FileSpider(config, dateMatcher)
+    spider = FCSpider.FileSpider(config, dateMatcher)
     sabapi = SabAPI.SabAPI(config)
     nabapi = NabAPI.NabAPI(config, dateMatcher)
 
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 2:
         search_crit += " " + sys.argv[2]
 
-    have = filespider.build_file_list(file_crit)
+    have = spider.build_file_list(file_crit)
 
     print "Have {0} files matching on disk".format(len(have))
 
@@ -32,9 +32,9 @@ if __name__ == "__main__":
 
     print "Found {0} results on the indexer".format(len(found))
 
-    possible = filespider.filter_missing(have, found)
+    possible = spider.filter_missing(have, found)
 
-    ignored = filespider.load_ignored()
+    ignored = spider.load_ignored()
 
     for each in possible:
         if each.guid() not in ignored:
@@ -49,4 +49,4 @@ if __name__ == "__main__":
             else:
                 ignored.append(each.guid())
 
-    filespider.save_ignored(ignored)
+    spider.save_ignored(ignored)

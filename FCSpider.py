@@ -1,6 +1,8 @@
+__author__ = 'purdyk'
 import os
 import re
 import pickle
+
 
 class FileSpider:
     def __init__(self, config, matcher):

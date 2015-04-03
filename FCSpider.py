@@ -12,7 +12,7 @@ class FileSpider:
     def build_file_list(self, matchSpec):
         glob_matcher = re.compile(".*" + matchSpec + ".*", re.I)
         file_list = {}
-        for root, subs, files in os.walk(self.config.get('general', 'basedir')):
+        for root, subs, files in os.walk(self.config.get('general', 'basedir'), None, True):
             for each in subs:
                 if glob_matcher.match(each):
                     (d, fn) = self.build_tuple(each)

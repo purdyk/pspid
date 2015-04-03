@@ -28,11 +28,16 @@ if __name__ == "__main__":
 
     print "Have {0} files matching on disk".format(len(have))
 
+    #found is a dict key:date val:NabResult
     found = nabapi.do_search(search_crit)
 
-    print "Found {0} results on the indexer".format(len(found))
+    size_limit = int(config.get('general', 'minsize')) * 1048576
 
-    possible = spider.filter_missing(have, found)
+    filtered = {k:v for k,v in found.iteritems() if int(v.size()) >= size_limit}
+
+    print "Found {0} / {1} results matching size constraint".format(len(found), len(filtered))
+
+    possible = spider.filter_missing(have, filtered)
 
     ignored = spider.load_ignored()
 

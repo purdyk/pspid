@@ -1,5 +1,6 @@
 [general]
 basedir:/some/path
+minsize:100
 
 [newznab]
 url:https://someserver/api?
